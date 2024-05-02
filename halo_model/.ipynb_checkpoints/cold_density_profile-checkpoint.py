@@ -110,6 +110,7 @@ def func_dens_profile_kspace(M, k, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, Ome
     summand3 = - np.sin(k_R_vir) / (a+k_R_vir)
     
     dens_profile_kspace = 1. / func_for_norm_factor(concentration)[:, None] * (summand1 + summand2 + summand3)
+    
     return dens_profile_kspace
 
 
