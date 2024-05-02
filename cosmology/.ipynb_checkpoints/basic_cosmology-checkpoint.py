@@ -39,7 +39,7 @@ def func_Omega_comp_z(z, Omega_0, Omega_m_0, Omega_w_0):
 def func_rho_comp_0(Omega_0):
     """
     present density of component Omega_0
-    retruns demsity in units of solar_mass/Mpc^3*h^2
+    returns density in units of solar_mass/Mpc^3*h^2
     """
     grav_const = 4.300917270069977e-09 #const.G.to('km**2*Mpc/(Msun*s**2)').value
     rho_crit_0 = 3. * 100**2 / (8. * np.pi * grav_const)

@@ -7,7 +7,7 @@ import numpy as np
 import scipy 
 from scipy import optimize
 
-#own pachages
+#own packages
 from cosmology.basic_cosmology import *
 from cosmology.overdensities import *
 from cosmology.variance import *
@@ -110,7 +110,8 @@ def func_dens_profile_kspace(M, k, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, Ome
     summand3 = - np.sin(k_R_vir) / (a+k_R_vir)
     
     dens_profile_kspace = 1. / func_for_norm_factor(concentration)[:, None] * (summand1 + summand2 + summand3)
-    
+    #print("dens_profile_kspace",dens_profile_kspace)
+    #print("shape dens_profile_kspace",np.shape(dens_profile_kspace))
     return dens_profile_kspace
 
 
