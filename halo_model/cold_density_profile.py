@@ -112,6 +112,7 @@ def func_dens_profile_kspace(M, k, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, Ome
     dens_profile_kspace = 1. / func_for_norm_factor(concentration)[:, None] * (summand1 + summand2 + summand3)
     #print("dens_profile_kspace",dens_profile_kspace)
     #print("shape dens_profile_kspace",np.shape(dens_profile_kspace))
+    print("shape of dens_profile_kspace", np.shape(dens_profile_kspace))
     return dens_profile_kspace
 
 

@@ -18,12 +18,24 @@ def func_dens_profile_kspace_baryons(M, k, k_sigma, PS_sigma, cosmo_dic, hmcode_
     Wk = func_dens_profile_kspace(M, k, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, Omega_0, Omega_0_sigma, eta_given = False, axion_dic=None)
 
     feedback_params = _get_feedback_parameters(Tagn) # Calling feedback parameters, calibrated on the BAHAMAS simulations, based off of T_agn
-    fg = (cosmo_dic['omega_b_0']/cosmo_dic['omega_m_0']-feedback_params['f0'])*(M/feedback_params['Mb0'])**2/(1.+(M/feedback_params['Mb0'])**2) # Gas content (Eq. 24 with beta=2)
+     # Gas content (Eq. 24 with beta=2)
     M=np.array([M])
+    #print("shape of M", np.shape(M))
+    #print("number of dimensions in M",np.ndim(M))
     
-    for i in range(0, len(M) ):
-        Wk[i,:] = (cosmo_dic['omega_d_0']/cosmo_dic['omega_m_0']+fg[i])*Wk[i,:]
-        Wk += feedback_params['f0']
+    #print("shape of k",np.shape(k) )
+    #print("Wk before",Wk)
+    fg=np.zeros(len(M))
+    for j in range(0,len(k)):
+        for i in range(0, len(M) ):
+            if np.ndim(M)>1:
+                Wk[i,j] =  (cosmo_dic['omega_d_0']/cosmo_dic['omega_m_0']+(cosmo_dic['omega_b_0']/cosmo_dic['omega_m_0']-feedback_params['f0'])*(M[0,i]/feedback_params['Mb0'])**2/(1.+(M[i,0]/feedback_params['Mb0'])**2))*Wk[i,j] + feedback_params['f0']*(M[0,i]/func_rho_comp_0(Omega_0)  ) # / (M[0,i]/func_rho_comp_0(Omega_0) )
+                
+            else:
+                Wk[i,j] =  (cosmo_dic['omega_d_0']/cosmo_dic['omega_m_0']+(cosmo_dic['omega_b_0']/cosmo_dic['omega_m_0']-feedback_params['f0'])*(M[i]/feedback_params['Mb0'])**2/(1.+(M[i]/feedback_params['Mb0'])**2))*Wk[i,j] + feedback_params['f0']*(M[i]/func_rho_comp_0(Omega_0) ) # / (M[i]/func_rho_comp_0(Omega_0) )
+           
+        #Wk += feedback_params['f0']
+    
     print("Wk now with baryons",Wk)
     print("shape of Wk",np.shape(Wk))
     return Wk
