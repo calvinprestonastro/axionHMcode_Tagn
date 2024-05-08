@@ -1,7 +1,7 @@
 # cosmological and astrophysical parameters
 omega_b_0 = 0.02237 #baryon densoity
 omega_d_0 = 0.12 	#total dark matter
-ax_fraction = 0.1 	#axion fraction of dark matter
+ax_fraction = 0.0001 	#axion fraction of dark matter
 m_ax = 1e-23		#axion mass
 h = 0.674			#reduced hubbel: h = H/100
 z = 0.				#redshift

@@ -30,10 +30,6 @@ def func_non_lin_PS_matter(M, k, PS, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, O
         as well as th one halo and two halo term
         """     
         dens_profile_arr = func_dens_profile_kspace(M, k, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, Omega_0, Omega_0_sigma, eta_given = eta_given, axion_dic=axion_dic)
-        
-        print("dens_profile_arr",dens_profile_arr)
-        print("dens_profile_arr shape",np.shape(dens_profile_arr) )
-
         halo_mass_func_arr = func_halo_mass_function(M, k_sigma, PS_sigma, cosmo_dic, Omega_0, Omega_0_sigma)
         
         integrand_arr_one = M[:, None]**2 * halo_mass_func_arr[:, None] * dens_profile_arr**2 
@@ -85,15 +81,12 @@ def func_non_lin_PS_matter(M, k, PS, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, O
     else:
         
         dens_profile_arr = func_dens_profile_kspace_baryons(M, k, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, Omega_0, Omega_0_sigma, eta_given = eta_given, axion_dic=axion_dic, Tagn=Tagn)
-        print("dens_profile_arr with baryons",dens_profile_arr)
-        print("dens_profile_arr with baryons shape",np.shape(dens_profile_arr) )
-
         halo_mass_func_arr = func_halo_mass_function(M, k_sigma, PS_sigma, cosmo_dic, Omega_0, Omega_0_sigma)
         
         integrand_arr_one = M[:, None]**2 * halo_mass_func_arr[:, None] * dens_profile_arr**2 
         #no neutrinos in halos
         if ax_one_halo == True:
-            f_ax = cosmo_dic['Omega_ax_0']/cosmo_dic['Omega_m_0']
+            f_ax = 0#cosmo_dic['Omega_ax_0']/cosmo_dic['Omega_m_0']
             one_halo = (1-f_ax)**2 * integrate.simps(integrand_arr_one, x = M, axis = 0)/ func_rho_comp_0(Omega_0)**2  
         else:
             one_halo = integrate.simps(integrand_arr_one, x = M, axis = 0)/ func_rho_comp_0(Omega_0)**2  
