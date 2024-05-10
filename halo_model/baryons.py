@@ -5,7 +5,6 @@ this changes the window function (the fourier transform of the halo matter densi
 
 Note: HMCODE2020 and axionHMCODE (https://arxiv.org/pdf/2209.13445) use slightly different definitions of the halo density profile, differing by a factor of 1/M (picked up again in the definition of the 1-halo term)
 '''
-print("checking kernel")
 from cold_density_profile import *
 
 def func_dens_profile_kspace_baryons(M, k, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, Omega_0, Omega_0_sigma, Tagn, eta_given = False, axion_dic=None):
@@ -16,17 +15,14 @@ def func_dens_profile_kspace_baryons(M, k, k_sigma, PS_sigma, cosmo_dic, hmcode_
     Changes made to make compatable with axionHMCODE 
     '''
     Wk = func_dens_profile_kspace(M, k, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, Omega_0, Omega_0_sigma, eta_given = False, axion_dic=None)
-    print("Wk at start", Wk)
-    print("Omega_0",Omega_0)
-    print("cosmo dic", cosmo_dic)
     feedback_params = _get_feedback_parameters(Tagn) # Calling feedback parameters, calibrated on the BAHAMAS simulations, based off of T_agn
     fg = ((cosmo_dic['omega_b_0']/cosmo_dic['omega_m_0']-feedback_params['f0'])*(M/feedback_params['Mb0'])**2/(1.+(M/feedback_params['Mb0'])**2)) # Gas content (Eq. 24 with beta=2)
     M=np.array([M])
-    print("shape of M", np.shape(M))
-    print("number of dimensions in M",np.ndim(M))
-    print(feedback_params)
-    print("shape of k",np.shape(k) )
-    Wk=Wk
+
+    cond1 = np.log10(k)>0
+    cond2 = np.log10(k)<=0
+    Wk[:,cond1] = 0
+    Wk[:,cond2] = Wk[:,cond2]
     '''
     for j in range(0,len(k)):
         for i in range(0, len(M) ):

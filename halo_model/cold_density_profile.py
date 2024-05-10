@@ -92,7 +92,7 @@ def func_dens_profile_kspace(M, k, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, Ome
         eta = hmcode_dic['eta']
         nu = func_nu(M, k_sigma, PS_sigma, Omega_0_sigma)
     else:
-        eta = np.array([0.]) 
+        eta = np.array([0.])
         nu = 1.
     
     R_vir = func_r_vir(cosmo_dic['z'], M, Omega_0, cosmo_dic['Omega_m_0'], cosmo_dic['Omega_w_0'])
