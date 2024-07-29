@@ -262,7 +262,7 @@ def func_dens_profile_ax_kspace(k, M, cosmo_dic, power_spec_dic_sigma, M_cut, ce
     we get the correct mass of the soliton halo, 
     see func_central_density_param
     return kspace denisty profile for the axion halo
-    the normalised density profile is demensionles
+    the normalised density profile is dimensionles
     """ 
     #the kspace density profile is defined via
     # \rho(k) = 4*\pi* int_0^r_vir \rho(r) * r^2 * sin(kr)/kr dr
@@ -290,3 +290,5 @@ def func_dens_profile_ax_kspace(k, M, cosmo_dic, power_spec_dic_sigma, M_cut, ce
                 dens_profile_kspace_arr.append(dens_kspace)
         
         return dens_profile_kspace_arr
+
+

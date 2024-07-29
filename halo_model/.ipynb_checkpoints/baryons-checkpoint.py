@@ -53,7 +53,60 @@ def func_dens_profile_kspace_baryons(M, k, k_sigma, PS_sigma, cosmo_dic, hmcode_
     print("Now trying to print new Wk!",WK)
     print("Now trying to print new WK[0,:]!",WK[0,:])
     print("Now trying to print new WK[99,:]!",WK[99,:])
+    print("shape of old Wk",np.shape(Wk))
+    print("shape of new WK",np.shape(WK))
 
+    Wk=WK
+
+    return Wk
+
+def func_dens_profile_kspace_baryons_axions(k, M, cosmo_dic, power_spec_dic_sigma, M_cut, central_dens_param, hmcode_params,Tagn, eta_given=False, axion_dic=None):
+    '''
+    Normalised Fourier transform for NFW profile, including baryonic effects
+    Equation (25) from Mead et al. (2021)
+    Changes Wk to account for halo deformation, stars and lower gas in haloes
+    Changes made to make compatable with axionHMCODE 
+    '''
+    print("These changes are working!")
+    Wk = func_dens_profile_ax_kspace(k, M, cosmo_dic, power_spec_dic_sigma, M_cut, central_dens_param, hmcode_params, eta_given=False, axion_dic=None)
+    
+    print("M[0]",M[0])
+    print("M[99]",M[99])
+
+    print("Wk[0,:] before changes",Wk[0,:])
+    print("Wk[99,:] before changes",Wk[99,:])
+
+    ### Apply baryons below
+    
+    feedback_params = _get_feedback_parameters(Tagn) # Calling feedback parameters, calibrated on the BAHAMAS simulations, based off of T_agn
+
+    #fg = ((cosmo_dic['omega_b_0']/cosmo_dic['omega_m_0']-feedback_params['f0'])*(M/feedback_params['Mb0'])**2/(1.+(M/feedback_params['Mb0'])**2))
+    
+    #print("Now trying to print fg!", fg)
+    print("printing func_rho_comp_0(Omega_0)", func_rho_comp_0(Omega_0))
+    print("printing feedback_params['f0']", feedback_params['f0'])
+    print("printing  feedback_params['f0']*M/(func_rho_comp_0(Omega_0))", feedback_params['f0']*M/(func_rho_comp_0(Omega_0)))
+    print("M/func_rho_comp_0(Omega_0)",M/func_rho_comp_0(Omega_0))
+
+    Mb=feedback_params['Mb0']
+    Om_b=cosmo_dic['omega_b_0']
+    Om_c=cosmo_dic['omega_d_0']
+    Om_m=cosmo_dic['omega_m_0']
+    Om_a= cosmo_dic['omega_ax_0']
+    fstar=feedback_params['f0']
+    
+    fg = (Om_b/Om_m-fstar)*(M/Mb)**2/(1.+(M/Mb)**2) # Gas content (Eq. 24 with beta=2)
+    WK = (( Om_a/(Om_b+Om_a) + fg)*Wk.T).T
+    WK = ( WK.T + (fstar /( M/(func_rho_comp_0(Omega_0)) ) ) ).T
+    
+    #WK = (( cosmo_dic['omega_d_0']/cosmo_dic['omega_m_0'] + fg )*Wk.T ).T 
+    #WK = (WK.T + feedback_params['f0']/(M/(func_rho_comp_0(Omega_0)))).T
+    #WK = (WK.T + feedback_params['f0']).T
+
+    
+    print("Now trying to print new Wk!",WK)
+    print("Now trying to print new WK[0,:]!",WK[0,:])
+    print("Now trying to print new WK[99,:]!",WK[99,:])
     print("shape of old Wk",np.shape(Wk))
     print("shape of new WK",np.shape(WK))
 

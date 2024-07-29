@@ -9,7 +9,7 @@ def load_cosmology_input(params_path):
     """
     create a dictionary with all important cosmology parameter
     the input file is given in params_path and each parameter
-    musst be given in a new line
+    must be given in a new line
     """
     cosmo_dic = {}
     file = open(params_path)
@@ -50,6 +50,8 @@ def load_cosmology_input(params_path):
             cosmo_dic['k_piv'] = eval(line[1].strip())
         elif line[0].strip() == 'transfer_kmax':
             cosmo_dic['transfer_kmax'] = eval(line[1].strip())  
+        elif line[0].strip() == 'T_agn':
+            cosmo_dic['T_agn'] = eval(line[1].strip())  
         elif line[0].split()[0] == '#':
             continue   
     file.close()
@@ -98,6 +100,8 @@ def load_LCDM_cosmology_input(params_path):
             cosmo_dic['k_piv'] = eval(line[1].strip())
         elif line[0].strip() == 'transfer_kmax':
             cosmo_dic['transfer_kmax'] = eval(line[1].strip())  
+        elif line[0].strip() == 'T_agn':
+            cosmo_dic['T_agn'] = eval(line[1].strip())  
         elif line[0].split()[0] == '#':
             continue   
     file.close()
