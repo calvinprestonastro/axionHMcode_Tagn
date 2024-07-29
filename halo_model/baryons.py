@@ -14,26 +14,54 @@ def func_dens_profile_kspace_baryons(M, k, k_sigma, PS_sigma, cosmo_dic, hmcode_
     Changes Wk to account for halo deformation, stars and lower gas in haloes
     Changes made to make compatable with axionHMCODE 
     '''
+    print("These changes are working!")
     Wk = func_dens_profile_kspace(M, k, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, Omega_0, Omega_0_sigma, eta_given = False, axion_dic=None)
-    feedback_params = _get_feedback_parameters(Tagn) # Calling feedback parameters, calibrated on the BAHAMAS simulations, based off of T_agn
-    fg = ((cosmo_dic['omega_b_0']/cosmo_dic['omega_m_0']-feedback_params['f0'])*(M/feedback_params['Mb0'])**2/(1.+(M/feedback_params['Mb0'])**2)) # Gas content (Eq. 24 with beta=2)
-    M=np.array([M])
 
-    cond1 = np.log10(k)>0
-    cond2 = np.log10(k)<=0
-    Wk[:,cond1] = 0
-    Wk[:,cond2] = Wk[:,cond2]
-    '''
-    for j in range(0,len(k)):
-        for i in range(0, len(M) ):
-            if np.ndim(M)>1:
-                Wk[i,j] = (   cosmo_dic['omega_d_0']/Omega_0+ (cosmo_dic['omega_b_0']/cosmo_dic['omega_m_0']-feedback_params['f0']*((M[0,i]/feedback_params['Mb0'])**2/(1.+(M[0,i]/feedback_params['Mb0'])**2))  )*Wk[i,j] + feedback_params['f0'] )
-            else:
-                Wk[i,j] =Wk [i,j]
-    '''
+    print("M[0]",M[0])
+    print("M[99]",M[99])
+
+    print("Wk[0,:] before changes",Wk[0,:])
+    print("Wk[99,:] before changes",Wk[99,:])
+
+    ### Apply baryons below
+    
+    feedback_params = _get_feedback_parameters(Tagn) # Calling feedback parameters, calibrated on the BAHAMAS simulations, based off of T_agn
+
+    #fg = ((cosmo_dic['omega_b_0']/cosmo_dic['omega_m_0']-feedback_params['f0'])*(M/feedback_params['Mb0'])**2/(1.+(M/feedback_params['Mb0'])**2))
+    
+    #print("Now trying to print fg!", fg)
+    print("printing func_rho_comp_0(Omega_0)", func_rho_comp_0(Omega_0))
+    print("printing feedback_params['f0']", feedback_params['f0'])
+    print("printing  feedback_params['f0']*M/(func_rho_comp_0(Omega_0))", feedback_params['f0']*M/(func_rho_comp_0(Omega_0)))
+    print("M/func_rho_comp_0(Omega_0)",M/func_rho_comp_0(Omega_0))
+
+    Mb=feedback_params['Mb0']
+    Om_b=cosmo_dic['omega_b_0']
+    Om_c=cosmo_dic['omega_d_0']
+    Om_m=cosmo_dic['omega_m_0']
+    fstar=feedback_params['f0']
+    
+    fg = (Om_b/Om_m-fstar)*(M/Mb)**2/(1.+(M/Mb)**2) # Gas content (Eq. 24 with beta=2)
+    WK = ((Om_c/Om_m+fg)*Wk.T).T
+    WK = ( WK.T + (fstar /( M/(func_rho_comp_0(Omega_0)) ) ) ).T
+    
+    #WK = (( cosmo_dic['omega_d_0']/cosmo_dic['omega_m_0'] + fg )*Wk.T ).T 
+    #WK = (WK.T + feedback_params['f0']/(M/(func_rho_comp_0(Omega_0)))).T
+    #WK = (WK.T + feedback_params['f0']).T
+
+    
+    print("Now trying to print new Wk!",WK)
+    print("Now trying to print new WK[0,:]!",WK[0,:])
+    print("Now trying to print new WK[99,:]!",WK[99,:])
+
+    print("shape of old Wk",np.shape(Wk))
+    print("shape of new WK",np.shape(WK))
+
+    Wk=WK
+
     return Wk
 
-def _get_feedback_parameters(T_AGN:float) -> dict:
+def _get_feedback_parameters(T_AGN):
     '''
     Maps one-Param baryon feedback model from HMCode2020 to 6 baryonic parameters
     Uses parameters from Table 5 in Mead et al. (2021)

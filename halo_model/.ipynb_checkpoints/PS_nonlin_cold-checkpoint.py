@@ -42,7 +42,6 @@ def func_non_lin_PS_matter(M, k, PS, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, O
         #one halo damping
         if one_halo_damping == True:
             one_halo = one_halo * (k/0.06846 )**4 / (1+(k/0.06846 )**4)
-            print("k_star",hmcode_dic['k_star'])
         else:
             one_halo = one_halo
                 
@@ -81,10 +80,11 @@ def func_non_lin_PS_matter(M, k, PS, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, O
     
     else:
         
-        dens_profile_arr = func_dens_profile_kspace_baryons(M, k, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, Omega_0, Omega_0_sigma, eta_given = eta_given, axion_dic=axion_dic, Tagn=Tagn)
+        dens_profile_arr = func_dens_profile_kspace(M, k, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, Omega_0, Omega_0_sigma, eta_given = eta_given, axion_dic=axion_dic)
+        dens_profile_arr_baryon = func_dens_profile_kspace_baryons(M, k, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, Omega_0, Omega_0_sigma, eta_given = eta_given, axion_dic=axion_dic, Tagn=Tagn)
         halo_mass_func_arr = func_halo_mass_function(M, k_sigma, PS_sigma, cosmo_dic, Omega_0, Omega_0_sigma)
         
-        integrand_arr_one = M[:, None]**2 * halo_mass_func_arr[:, None] * dens_profile_arr**2 
+        integrand_arr_one = M[:, None]**2 * halo_mass_func_arr[:, None] * dens_profile_arr_baryon**2 
         #no neutrinos in halos
         if ax_one_halo == True:
             f_ax = 0#cosmo_dic['Omega_ax_0']/cosmo_dic['Omega_m_0']
@@ -104,7 +104,7 @@ def func_non_lin_PS_matter(M, k, PS, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, O
             integrand_arr_two = M[:, None] * halo_mass_func_arr[:, None] * halo_bias_arr[:, None] * dens_profile_arr
             
             #summand to take care of nummericals issues of the integral, see appendix A in https://arxiv.org/abs/2005.00009
-            summand2 = func_dens_profile_kspace_baryons(np.min(M), k, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, Omega_0, Omega_0_sigma, eta_given = eta_given, axion_dic=axion_dic, Tagn=Tagn) \
+            summand2 = func_dens_profile_kspace(np.min(M), k, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, Omega_0, Omega_0_sigma, eta_given = eta_given, axion_dic=axion_dic) \
                                    * ( 1 - integrate.simps(M[:, None] * halo_mass_func_arr[:, None] * halo_bias_arr[:, None], x = M, axis = 0) / func_rho_comp_0(Omega_0)) 
             factor2 = integrate.simps(integrand_arr_two, x = M, axis = 0) / func_rho_comp_0(Omega_0) + summand2 
             
@@ -113,7 +113,7 @@ def func_non_lin_PS_matter(M, k, PS, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, O
             halo_bias_arr = func_halo_bias(M, k_sigma, PS_sigma, Omega_0_sigma)
             integrand_arr_two = M[:, None] * halo_mass_func_arr[:, None] * halo_bias_arr[:, None] * dens_profile_arr
             #summand2 take care of nummericals issues of the integral, see appendix A in https://arxiv.org/abs/2005.00009
-            summand2 = func_dens_profile_kspace_baryons(np.min(M), k, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, Omega_0, Omega_0_sigma, eta_given = eta_given, axion_dic=axion_dic, Tagn=Tagn) \
+            summand2 = func_dens_profile_kspace(np.min(M), k, k_sigma, PS_sigma, cosmo_dic, hmcode_dic, Omega_0, Omega_0_sigma, eta_given = eta_given, axion_dic=axion_dic) \
                                    * ( 1 - integrate.simps(M[:, None] * halo_mass_func_arr[:, None] * halo_bias_arr[:, None], x = M, axis = 0) / func_rho_comp_0(Omega_0)) 
             factor2 = integrate.simps(integrand_arr_two, x = M, axis = 0) / func_rho_comp_0(Omega_0) + summand2 
             
